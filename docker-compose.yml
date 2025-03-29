@@ -1,0 +1,13 @@
+services:
+  postgres:
+    image: postgres:17
+    container_name: profilm_db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: profilm
+    tmpfs: 
+      - /var/lib/postgresql/data
+    ports:
+      - "5433:5432"
