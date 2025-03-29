@@ -1,6 +1,6 @@
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import { config } from '../config.js';
-
+import cacheService from './cacheService.js';
 
 class MovieApiService {
     private axiosInstance: AxiosInstance;
@@ -18,8 +18,15 @@ class MovieApiService {
     }
 
     async fetchMovies(params: any): Promise<any> {
+        const cacheKey = JSON.stringify({ function: "fetchMovies", params });
+        const cachedData = cacheService.get(cacheKey);
+        if (cachedData) return cachedData;
+
         try {
             const response: AxiosResponse = await this.axiosInstance.get('/discover/movie', { params });
+            
+            cacheService.set(cacheKey, response.data);
+            
             return response.data;
         } catch (error) {
             console.error('Error fetching movies:', error);
