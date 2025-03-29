@@ -4,7 +4,8 @@
     "moduleResolution": "nodenext",
     "target": "ES2024",
     "sourceMap": true,
-    "outDir": "dist"
+    "outDir": "dist",
+    "experimentalDecorators": true,
   },
   "include": ["src/**/*"]
 }
