@@ -11,3 +11,7 @@ services:
       - /var/lib/postgresql/data
     ports:
       - "5433:5432"
+      
+volumes:
+  postgres_data:
+    driver: local
