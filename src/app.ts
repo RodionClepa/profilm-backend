@@ -1,6 +1,6 @@
 import express, { Express, Request, Response } from 'express';
 import sequelize from './database/init.js';
-import testRouter from './routes/test.routes.js';
+import movieRouter from './routes/movie.routes.js';
 import genresRouter from './routes/genre.routes.js';
 import { initializeGenres } from './database/seeders.js';
 
@@ -24,7 +24,7 @@ async function startServer() {
 
   await initializeGenres();
 
-  app.use("/api/movies", testRouter);
+  app.use("/api/movies", movieRouter);
   app.use("/api/genres", genresRouter);
 
   app.get('/', (req: Request, res: Response) => {
