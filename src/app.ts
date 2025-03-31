@@ -1,6 +1,7 @@
 import express, { Express, Request, Response } from 'express';
 import sequelize from './database/init.js';
 import testRouter from './routes/test.routes.js';
+import genresRouter from './routes/genre.routes.js';
 import { initializeGenres } from './database/seeders.js';
 
 const app: Express = express();
@@ -24,9 +25,10 @@ async function startServer() {
   await initializeGenres();
 
   app.use("/api/movies", testRouter);
+  app.use("/api/genres", genresRouter);
 
   app.get('/', (req: Request, res: Response) => {
-    res.send('Hello World!');
+    res.send('Hello World!!');
   });
 
   app.listen(port, () => {
