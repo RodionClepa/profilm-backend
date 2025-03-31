@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import movieApiService from "../services/moviesApi.js";
+import { mapMovieResponse } from "../mapper/movieMapper.js";
 
 export const getPopularMovies = async (req: Request, res: Response) => {
   const page = parseInt(req.query.page as string) || 1;
@@ -19,7 +20,9 @@ export const getPopularMovies = async (req: Request, res: Response) => {
       sort_by: 'popularity.desc',
     });
 
-    res.json(movies);
+    const formattedMovies = mapMovieResponse(movies);
+
+    res.json(formattedMovies);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
