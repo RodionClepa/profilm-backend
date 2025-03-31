@@ -2,6 +2,7 @@ import { Sequelize } from '@sequelize/core';
 import dotenv from 'dotenv';
 import { PostgresDialect } from '@sequelize/postgres';
 import { Movie } from '../models/Movie.models.js';
+import { GenreType } from '../models/GenreType.models.js';
 
 // Load .env variables
 dotenv.config();
@@ -14,13 +15,13 @@ const DB_HOST = process.env.DB_HOST || 'localhost';
 const DB_PORT = parseInt(process.env.POSTGRES_PORT as string, 10) || 5432;
 
 const sequelize = new Sequelize({
-    dialect: PostgresDialect,
-    database: DB_NAME,
-    user: DB_USER,
-    password: DB_PASSWORD,
-    host: DB_HOST,
-    port: DB_PORT,
-    models: [Movie]
+  dialect: PostgresDialect,
+  database: DB_NAME,
+  user: DB_USER,
+  password: DB_PASSWORD,
+  host: DB_HOST,
+  port: DB_PORT,
+  models: [Movie, GenreType]
 })
 
 export default sequelize;

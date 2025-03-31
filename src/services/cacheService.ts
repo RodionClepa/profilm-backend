@@ -1,31 +1,31 @@
 import NodeCache from 'node-cache';
 
 class CacheService {
-    private cache: NodeCache;
+  private cache: NodeCache;
 
-    constructor() {
-        this.cache = new NodeCache({ stdTTL: 300, checkperiod: 320 });
-    }
+  constructor() {
+    this.cache = new NodeCache({ stdTTL: 300, checkperiod: 320 });
+  }
 
-    get<T>(key: string): T | undefined {
-        return this.cache.get(key);
-    }
+  get<T>(key: string): T | undefined {
+    return this.cache.get(key);
+  }
 
-    set<T>(key: string, value: T): boolean {
-        return this.cache.set(key, value);
-    }
+  set<T>(key: string, value: T, ttl?: number): boolean {
+    return this.cache.set(key, value, ttl);
+  }
 
-    has(key: string): boolean {
-        return this.cache.has(key);
-    }
+  has(key: string): boolean {
+    return this.cache.has(key);
+  }
 
-    del(key: string): boolean {
-        return this.cache.del(key) > 0;
-    }
+  del(key: string): boolean {
+    return this.cache.del(key) > 0;
+  }
 
-    flush(): void {
-        this.cache.flushAll();
-    }
+  flush(): void {
+    this.cache.flushAll();
+  }
 }
 
 export default new CacheService();
