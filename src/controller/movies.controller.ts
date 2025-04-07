@@ -7,7 +7,7 @@ export const getPopularMovies = async (req: Request, res: Response) => {
   const include_adult = req.query.include_adult === 'true';
 
   if (page < 1 || page > 500) {
-    res.status(400).json({ message: "Pages should start at 1 and max at 50" });
+    res.status(400).json({ message: "Pages should start at 1 and max at 500" });
     return;
   }
 
