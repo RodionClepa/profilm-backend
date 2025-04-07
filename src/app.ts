@@ -3,9 +3,16 @@ import sequelize from './database/init.js';
 import movieRouter from './routes/movie.routes.js';
 import genresRouter from './routes/genre.routes.js';
 import { initializeGenres } from './database/seeders.js';
+import cors from 'cors';
 
 const app: Express = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
+
+const corsOptions = {
+  origin: process.env.CORS_ORIGIN || '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+};
 
 try {
   await sequelize.authenticate();
@@ -23,6 +30,8 @@ try {
 async function startServer() {
 
   await initializeGenres();
+
+  app.use(cors(corsOptions))
 
   app.use("/api/movies", movieRouter);
   app.use("/api/genres", genresRouter);
