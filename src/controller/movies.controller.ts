@@ -5,6 +5,7 @@ import { mapMovieResponse } from "../mapper/movieMapper.js";
 export const getPopularMovies = async (req: Request, res: Response) => {
   const page = parseInt(req.query.page as string) || 1;
   const include_adult = req.query.include_adult === 'true';
+  const imageSize = parseInt(req.query.imageSize as string) || 500;
 
   if (page < 1 || page > 500) {
     res.status(400).json({ message: "Pages should start at 1 and max at 500" });
@@ -20,7 +21,7 @@ export const getPopularMovies = async (req: Request, res: Response) => {
       sort_by: 'popularity.desc',
     });
 
-    const formattedMovies = mapMovieResponse(movies);
+    const formattedMovies = mapMovieResponse(movies, imageSize);
 
     res.json(formattedMovies);
   } catch (error) {
