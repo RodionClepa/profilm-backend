@@ -8,7 +8,7 @@ export const getPopularMovies = async (req: CustomRequest<FilmQueryParams>, res:
   const { page, includeAdult, imageSize } = req.validatedQuery;
 
   try {
-    const movies = await filmApiService.getMoviesPopular({
+    const movies = await filmApiService.discoverMovie({
       include_adult: includeAdult,
       include_video: 'false',
       language: 'en-US',

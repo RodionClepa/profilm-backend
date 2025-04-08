@@ -6,7 +6,7 @@ export const getPopularTV = async (req: Request, res: Response) => {
   const { page, includeAdult, imageSize } = req.validatedQuery;
 
   try {
-    const tvs = await filmApiService.getTVPopular({
+    const tvs = await filmApiService.discoverTV({
       include_adult: includeAdult,
       include_video: 'false',
       language: 'en-US',

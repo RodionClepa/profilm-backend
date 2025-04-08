@@ -18,7 +18,7 @@ class FilmApiService {
     });
   }
 
-  async getMoviesPopular(params: any): Promise<any> {
+  async discoverMovie(params: any): Promise<any> {
     const cacheKey = JSON.stringify({ function: "getMoviesPopular", params });
     const cachedData = cacheService.get(cacheKey);
     if (cachedData) return cachedData;
@@ -33,8 +33,8 @@ class FilmApiService {
     }
   }
 
-  async getTVPopular(params: any): Promise<any> {
-    const cacheKey = JSON.stringify({ function: "getTVPopular", params });
+  async discoverTV(params: any): Promise<any> {
+    const cacheKey = JSON.stringify({ function: "discoverTV", params });
     const cachedData = cacheService.get(cacheKey);
     if (cachedData) return cachedData;
 
