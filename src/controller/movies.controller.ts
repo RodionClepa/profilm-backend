@@ -1,16 +1,14 @@
 import { Request, Response } from "express";
 import movieApiService from "../services/moviesApi.js";
 import { mapMovieResponse } from "../mapper/movieMapper.js";
+import { CustomRequest } from "../types/express/index.js";
+import { FilmQueryParams } from "../types/query.type.js";
 
-export const getPopularMovies = async (req: Request, res: Response) => {
-  const page = parseInt(req.query.page as string) || 1;
-  const include_adult = req.query.include_adult === 'true';
-  const imageSize = parseInt(req.query.imageSize as string) || 500;
-
-  if (page < 1 || page > 500) {
-    res.status(400).json({ message: "Pages should start at 1 and max at 500" });
-    return;
-  }
+export const getPopularMovies = async (req: CustomRequest<FilmQueryParams>, res: Response) => {
+  console.log("req-query", req.validatedQuery);
+  const page = req.validatedQuery.page;
+  const include_adult = req.validatedQuery.include_adult;
+  const imageSize = req.validatedQuery.imageSize;
 
   try {
     const movies = await movieApiService.getMoviesPopular({
