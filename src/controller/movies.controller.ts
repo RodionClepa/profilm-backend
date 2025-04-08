@@ -1,18 +1,15 @@
 import { Request, Response } from "express";
-import movieApiService from "../services/moviesApi.js";
+import filmApiService from "../services/filmApi.js";
 import { mapMovieResponse } from "../mapper/movieMapper.js";
 import { CustomRequest } from "../types/express/index.js";
 import { FilmQueryParams } from "../types/query.type.js";
 
 export const getPopularMovies = async (req: CustomRequest<FilmQueryParams>, res: Response) => {
-  console.log("req-query", req.validatedQuery);
-  const page = req.validatedQuery.page;
-  const include_adult = req.validatedQuery.include_adult;
-  const imageSize = req.validatedQuery.imageSize;
+  const { page, includeAdult, imageSize } = req.validatedQuery;
 
   try {
-    const movies = await movieApiService.getMoviesPopular({
-      include_adult: include_adult,
+    const movies = await filmApiService.getMoviesPopular({
+      include_adult: includeAdult,
       include_video: 'false',
       language: 'en-US',
       page: page,

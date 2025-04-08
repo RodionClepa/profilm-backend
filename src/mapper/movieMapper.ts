@@ -8,7 +8,7 @@ export const mapMovie = (rawMovie: RawMovie, imageSize: number = 500): Movie => 
   genreIds: rawMovie.genre_ids,
   releaseDate: new Date(rawMovie.release_date),
   overview: rawMovie.overview,
-  posterPath: config.POSTER_MOVIE_API_URL.replace('w500', `w${imageSize}`) + rawMovie.poster_path,
+  posterPath: `${config.POSTER_FILM_API_URL}w${imageSize}${rawMovie.poster_path}`,
 });
 
 export const mapMovieResponse = (rawResponse: RawMovieResponse, imageSize: number = 500): MovieResponse => ({

@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
-import movieApiService from "../services/moviesApi.js";
+import filmApiService from "../services/filmApi.js";
 
 export const getTvGenres = async (req: Request, res: Response) => {
   try {
-    const genres = await movieApiService.fetchTVGenres();
+    const genres = await filmApiService.fetchTVGenres();
 
     res.json(genres);
   } catch (error) {
@@ -13,7 +13,7 @@ export const getTvGenres = async (req: Request, res: Response) => {
 
 export const getMovieGenres = async (req: Request, res: Response) => {
   try {
-    const genres = await movieApiService.fetchMovieGenres();
+    const genres = await filmApiService.fetchMovieGenres();
 
     res.json(genres);
   } catch (error) {
