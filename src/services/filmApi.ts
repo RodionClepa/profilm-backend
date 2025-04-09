@@ -2,6 +2,9 @@ import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import { config } from '../config.js';
 import cacheService from './cacheService.js';
 import { GenreApiResponse } from '../types/genre.type.js';
+import { RawMovieResponse } from '../types/movie.type.js';
+import { RawTVResponse, RawTVResponseTrending, RawTVTrending } from '../types/tv.type.js';
+import { TimeWindow } from '../types/query.type.js';
 
 class FilmApiService {
   private axiosInstance: AxiosInstance;
@@ -18,13 +21,13 @@ class FilmApiService {
     });
   }
 
-  async discoverMovie(params: any): Promise<any> {
+  async discoverMovie(params: any): Promise<RawMovieResponse> {
     const cacheKey = JSON.stringify({ function: "getMoviesPopular", params });
-    const cachedData = cacheService.get(cacheKey);
+    const cachedData = cacheService.get<RawMovieResponse>(cacheKey);
     if (cachedData) return cachedData;
 
     try {
-      const response: AxiosResponse = await this.axiosInstance.get('/discover/movie', { params });
+      const response: AxiosResponse<RawMovieResponse> = await this.axiosInstance.get<RawMovieResponse>('/discover/movie', { params });
       cacheService.set(cacheKey, response.data);
       return response.data;
     } catch (error) {
@@ -33,18 +36,48 @@ class FilmApiService {
     }
   }
 
-  async discoverTV(params: any): Promise<any> {
+  async discoverTV(params: any): Promise<RawTVResponse> {
     const cacheKey = JSON.stringify({ function: "discoverTV", params });
-    const cachedData = cacheService.get(cacheKey);
+    const cachedData = cacheService.get<RawTVResponse>(cacheKey);
     if (cachedData) return cachedData;
 
     try {
-      const response: AxiosResponse = await this.axiosInstance.get('/discover/tv', { params });
+      const response: AxiosResponse<RawTVResponse> = await this.axiosInstance.get<RawTVResponse>('/discover/tv', { params });
       cacheService.set(cacheKey, response.data);
       return response.data;
     } catch (error) {
       console.error('Error fetching tvs:', error);
       throw new Error('Failed to fetch tvs data');
+    }
+  }
+
+  async trendingMovies(params: any, timeWindow: TimeWindow): Promise<RawMovieResponse> {
+    const cacheKey = JSON.stringify({ function: "trendingMovies", params, timeWindow });
+    const cachedData = cacheService.get<RawMovieResponse>(cacheKey);
+    if (cachedData) return cachedData;
+
+    try {
+      const response: AxiosResponse<RawMovieResponse> = await this.axiosInstance.get<RawMovieResponse>(`/trending/movie/${timeWindow}`, { params });
+      cacheService.set(cacheKey, response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching Trending Movies:', error);
+      throw new Error('Failed to fetch Trending Movies data');
+    }
+  }
+
+  async trendingTVs(params: any, timeWindow: TimeWindow): Promise<RawTVResponseTrending> {
+    const cacheKey = JSON.stringify({ function: "trendingTVs", params, timeWindow });
+    const cachedData = cacheService.get<RawTVResponseTrending>(cacheKey);
+    if (cachedData) return cachedData;
+
+    try {
+      const response: AxiosResponse<RawTVResponseTrending> = await this.axiosInstance.get<RawTVResponseTrending>(`/trending/tv/${timeWindow}`, { params });
+      cacheService.set(cacheKey, response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching Trending Movies:', error);
+      throw new Error('Failed to fetch Trending Movies data');
     }
   }
 
@@ -57,7 +90,7 @@ class FilmApiService {
     if (cachedData) return cachedData;
 
     try {
-      const response: AxiosResponse<GenreApiResponse> = await this.axiosInstance.get('/genre/tv/list', { params });
+      const response: AxiosResponse<GenreApiResponse> = await this.axiosInstance.get<GenreApiResponse>('/genre/tv/list', { params });
       cacheService.set(cacheKey, response.data, 3600);
       return response.data;
     } catch (error) {

@@ -4,7 +4,7 @@ import { CustomRequest } from '../types/express/index.js';
 
 export const validatePopularMoviesQuery = (req: CustomRequest<FilmQueryParams>, res: Response, next: NextFunction): void => {
   const page = parseInt(req.query.page as string) || 1;
-  const includeAdult = req.query.include_adult === 'true';
+  const includeAdult = req.query.includeAdult === 'true';
   const imageSize = parseInt(req.query.imageSize as string) || 500;
 
   if (page < 1 || page > 500) {

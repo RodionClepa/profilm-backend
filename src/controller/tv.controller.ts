@@ -1,8 +1,10 @@
 import { Request, Response } from "express";
 import filmApiService from "../services/filmApi.js";
-import { mapTVResponse } from "../mapper/tvMapper.js";
+import { mapTVResponse, mapTVResponseTrending } from "../mapper/tvMapper.js";
+import { FilmTrendingQueryParams } from "../types/query.type.js";
+import { CustomRequest } from "../types/express/index.js";
 
-export const getPopularTV = async (req: Request, res: Response) => {
+export const getPopularTV = async (req: CustomRequest<FilmTrendingQueryParams>, res: Response) => {
   const { page, includeAdult, imageSize } = req.validatedQuery;
 
   try {
@@ -14,7 +16,25 @@ export const getPopularTV = async (req: Request, res: Response) => {
       sort_by: 'popularity.desc',
     });
 
-    const formattedTVs = mapTVResponse(tvs, imageSize);
+    const formattedTVs = mapTVResponse(tvs, imageSize, includeAdult);
+
+    res.json(formattedTVs);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const getTrendingTVs = async (req: CustomRequest<FilmTrendingQueryParams>, res: Response) => {
+  const { page, includeAdult, imageSize, timeWindow } = req.validatedQuery;
+
+  try {
+    const tvs = await filmApiService.trendingTVs({
+      include_adult: includeAdult,
+      include_video: 'false',
+      page: page
+    }, timeWindow);
+
+    const formattedTVs = mapTVResponseTrending(tvs, imageSize);
 
     res.json(formattedTVs);
   } catch (error) {
