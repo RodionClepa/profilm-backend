@@ -14,6 +14,7 @@ export const getPopularTV = async (req: CustomRequest<FilmTrendingQueryParams>, 
       language: 'en-US',
       page: page,
       sort_by: 'popularity.desc',
+      'primary_release_date.lte': new Date().toISOString().split('T')[0]
     });
 
     const formattedTVs = mapTVResponse(tvs, imageSize, includeAdult);
