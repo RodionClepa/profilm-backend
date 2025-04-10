@@ -16,6 +16,13 @@ const corsOptions = {
 };
 
 try {
+  console.log(
+    process.env.POSTGRES_USER,
+    process.env.POSTGRES_PASSWORD,
+    process.env.POSTGRES_DB,
+    process.env.DB_HOST,
+    process.env.POSTGRES_PORT
+  );
   await sequelize.authenticate();
   console.log('Connection has been established successfully.');
 

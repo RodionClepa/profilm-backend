@@ -1,4 +1,18 @@
 services:
+  profilm-server:
+    build: .
+    container_name: profilm-server
+    restart: always
+    env_file: .env
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+    volumes:
+      - .:/app
+    command: npm start
+    networks:
+      - profilm-network
   postgres:
     image: postgres:17
     container_name: profilm_db
@@ -11,7 +25,14 @@ services:
       - profilm_db:/var/lib/postgresql/data
     ports:
       - "5433:5432"
+    networks:
+      - profilm-network
 
 volumes:
   profilm_db:
     driver: local
+
+networks:
+  profilm-network:
+    external: true
+    name: profilm-network
