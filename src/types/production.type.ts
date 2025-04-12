@@ -1,11 +1,18 @@
-export interface ProductionCompany {
+export interface RawProductionCompany {
   id: number;
   logo_path: string | null;
   name: string;
   origin_country: string;
 }
 
-export interface ProductionCountry {
+export interface ProductionCompany {
+  id: number;
+  logoPath: string;
+  name: string;
+  originCountry: string;
+}
+
+export interface RawProductionCountry {
   iso_3166_1: string;
   name: string;
 }

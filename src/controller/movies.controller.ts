@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import filmApiService from "../services/filmApi.js";
-import { mapMovieResponse } from "../mapper/movieMapper.js";
+import { mapMovieDetailsResponse, mapMovieResponse } from "../mapper/movieMapper.js";
 import { CustomRequest } from "../types/express/index.js";
 import { FilmQueryParams, FilmTrendingQueryParams } from "../types/query.type.js";
 import { getTodayDate } from "../utilities/date.utility.js";
@@ -79,7 +79,10 @@ export const getMovieDetails = async (req: CustomRequest<FilmQueryParams>, res: 
 
   try {
     const movie = await filmApiService.detailsMovie(movieId);
-    res.json(movie);
+
+    const formattedMovies = mapMovieDetailsResponse(movie);
+
+    res.json(formattedMovies);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

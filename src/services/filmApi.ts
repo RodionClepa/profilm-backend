@@ -2,9 +2,10 @@ import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import { config } from '../config.js';
 import cacheService from './cacheService.js';
 import { GenreApiResponse } from '../types/genre.type.js';
-import { RawMovieDetailsResponse, RawMovieResponse } from '../types/movie.type.js';
+import { RawMovieResponse } from '../types/movie.type.js';
 import { RawTVResponse, RawTVResponseTrending, RawTVTrending } from '../types/tv.type.js';
 import { TimeWindow } from '../types/query.type.js';
+import { RawMovieDetailsResponse } from '../types/movie-details.type.js';
 
 class FilmApiService {
   private axiosInstance: AxiosInstance;
@@ -81,13 +82,13 @@ class FilmApiService {
     }
   }
 
-  async detailsMovie(id: number): Promise<any> {
+  async detailsMovie(id: number): Promise<RawMovieDetailsResponse> {
     const cacheKey = JSON.stringify({ function: "detailsMovie", id });
-    const cachedData = cacheService.get<any>(cacheKey);
+    const cachedData = cacheService.get<RawMovieDetailsResponse>(cacheKey);
     if (cachedData) return cachedData;
 
     try {
-      const response: AxiosResponse<any> = await this.axiosInstance.get<any>(`/movie/${id}?append_to_response=images,reviews,videos`);
+      const response: AxiosResponse<RawMovieDetailsResponse> = await this.axiosInstance.get<RawMovieDetailsResponse>(`/movie/${id}?append_to_response=images,reviews,videos`);
       cacheService.set(cacheKey, response.data);
       return response.data;
     } catch (error) {
