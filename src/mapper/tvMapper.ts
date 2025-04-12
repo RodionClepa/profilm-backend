@@ -8,7 +8,7 @@ export const mapTV = (rawTV: RawTV, imageSize: number = 500, adult: boolean = fa
   adult: adult,
   releaseDate: new Date(rawTV.first_air_date),
   overview: rawTV.overview,
-  posterPath: `${config.POSTER_FILM_API_URL}w${imageSize}${rawTV.poster_path}`,
+  posterPath: `${config.FILM_IMAGE_API_URL}w${imageSize}${rawTV.poster_path}`,
 });
 
 export const mapTVResponse = (rawResponse: RawTVResponse, imageSize: number = 500, adult: boolean = false): TVResponse => ({
@@ -25,7 +25,7 @@ export const mapTVTrending = (rawTV: RawTVTrending, imageSize: number = 500, adu
   adult: adult,
   releaseDate: new Date(rawTV.first_air_date),
   overview: rawTV.overview,
-  posterPath: `${config.POSTER_FILM_API_URL}w${imageSize}${rawTV.poster_path}`,
+  posterPath: `${config.FILM_IMAGE_API_URL}w${imageSize}${rawTV.poster_path}`,
 });
 
 export const mapTVResponseTrending = (rawResponse: RawTVResponseTrending, imageSize: number = 500, adult: boolean = false): TVResponse => ({

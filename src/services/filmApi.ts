@@ -6,6 +6,7 @@ import { RawMovieResponse } from '../types/movie.type.js';
 import { RawTVResponse, RawTVResponseTrending, RawTVTrending } from '../types/tv.type.js';
 import { TimeWindow } from '../types/query.type.js';
 import { RawMovieDetailsResponse } from '../types/movie-details.type.js';
+import { NotFoundError } from '../errors/not-found.errors.js';
 
 class FilmApiService {
   private axiosInstance: AxiosInstance;
@@ -92,8 +93,11 @@ class FilmApiService {
       cacheService.set(cacheKey, response.data);
       return response.data;
     } catch (error) {
-      console.error(`Error fetching Details for movie id ${id}:`, error);
-      throw new Error(`Failed to fetch Details for movie ${id}`);
+      if (error.response?.status === 404) {
+        throw new NotFoundError(`Movie with ID ${id} not found`);
+      }
+      console.error(`Error fetching details for movie ID ${id}:`, error);
+      throw new Error(`Failed to fetch details for movie ID ${id}`);
     }
   }
 

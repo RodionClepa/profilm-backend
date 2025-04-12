@@ -5,6 +5,7 @@ import { CustomRequest } from "../types/express/index.js";
 import { FilmQueryParams, FilmTrendingQueryParams } from "../types/query.type.js";
 import { getTodayDate } from "../utilities/date.utility.js";
 import { ReleaseType } from "../types/film.type.js";
+import { NotFoundError } from "../errors/not-found.errors.js";
 
 export const getPopularMovies = async (req: CustomRequest<FilmQueryParams>, res: Response) => {
   const { page, includeAdult, imageSize } = req.validatedQuery;
@@ -84,6 +85,11 @@ export const getMovieDetails = async (req: CustomRequest<FilmQueryParams>, res: 
 
     res.json(formattedMovies);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    if (error instanceof NotFoundError) {
+      res.status(404).json({ message: error.message });
+      return;
+    }
+    console.error('Error in getMovieDetails:', error);
+    res.status(500).json({ message: 'Internal server error' });
   }
 }
