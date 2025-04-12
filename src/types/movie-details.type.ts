@@ -120,14 +120,15 @@ export interface MovieDetailsResponse {
   budget: number;
   genres: Genre[];
   overview: string;
+  poster: string;
   popularity: number;
   releaseDate: Date;
   revenue: number;
   status: string;
   voteAverage: number;
   voteCount: number;
-  productionCompanies: ProductionCompany[],
-  images: MovieImage[],
-  reviews: MovieReviewsResult,
-  videos: MovieVideo[]
+  productionCompanies: ProductionCompany[];
+  images: MovieImage[];
+  reviews: MovieReviewsResult;
+  videos: MovieVideo[];
 }

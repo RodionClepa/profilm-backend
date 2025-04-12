@@ -66,6 +66,7 @@ export const mapMovieDetailsResponse = (rawResponse: RawMovieDetailsResponse): M
   budget: rawResponse.budget,
   genres: rawResponse.genres,
   overview: rawResponse.overview,
+  poster: config.FILM_IMAGE_API_URL + 'w780' + rawResponse.poster_path,
   popularity: rawResponse.popularity,
   releaseDate: new Date(rawResponse.release_date),
   revenue: rawResponse.revenue,
