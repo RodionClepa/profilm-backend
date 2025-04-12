@@ -2,7 +2,7 @@ import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import { config } from '../config.js';
 import cacheService from './cacheService.js';
 import { GenreApiResponse } from '../types/genre.type.js';
-import { RawMovieResponse } from '../types/movie.type.js';
+import { RawMovieDetailsResponse, RawMovieResponse } from '../types/movie.type.js';
 import { RawTVResponse, RawTVResponseTrending, RawTVTrending } from '../types/tv.type.js';
 import { TimeWindow } from '../types/query.type.js';
 
@@ -78,6 +78,21 @@ class FilmApiService {
     } catch (error) {
       console.error('Error fetching Trending Movies:', error);
       throw new Error('Failed to fetch Trending Movies data');
+    }
+  }
+
+  async detailsMovie(id: number): Promise<any> {
+    const cacheKey = JSON.stringify({ function: "detailsMovie", id });
+    const cachedData = cacheService.get<any>(cacheKey);
+    if (cachedData) return cachedData;
+
+    try {
+      const response: AxiosResponse<any> = await this.axiosInstance.get<any>(`/movie/${id}?append_to_response=images,reviews,videos`);
+      cacheService.set(cacheKey, response.data);
+      return response.data;
+    } catch (error) {
+      console.error(`Error fetching Details for movie id ${id}:`, error);
+      throw new Error(`Failed to fetch Details for movie ${id}`);
     }
   }
 

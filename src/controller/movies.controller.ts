@@ -66,3 +66,21 @@ export const getUpcomingMovies = async (req: CustomRequest<FilmQueryParams>, res
     res.status(500).json({ message: error.message });
   }
 }
+
+export const getMovieDetails = async (req: CustomRequest<FilmQueryParams>, res: Response) => {
+  const id: string = req.params.id;
+
+  const movieId: number = parseInt(id, 10);
+
+  if (isNaN(movieId)) {
+    res.status(400).send('Invalid movie ID');
+    return;
+  }
+
+  try {
+    const movie = await filmApiService.detailsMovie(movieId);
+    res.json(movie);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
