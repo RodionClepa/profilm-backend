@@ -122,6 +122,8 @@ export interface MovieDetailsResponse {
   overview: string;
   poster: string;
   popularity: number;
+  tagline: string;
+  runtime: number;
   releaseDate: Date;
   revenue: number;
   status: string;
