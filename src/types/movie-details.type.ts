@@ -1,4 +1,5 @@
 import { Genre } from "./genre.type.js";
+import { Movie, RawMovie } from "./movie.type.js";
 import { RawProductionCompany, RawProductionCountry, SpokenLanguage, ProductionCompany } from "./production.type.js";
 
 export interface RawMovieImage {
@@ -55,6 +56,48 @@ export interface RawMovieVideos {
   ]
 }
 
+export interface RawMovieCast {
+  adult: boolean;
+  gender: number;
+  id: number;
+  known_for_department: string;
+  name: string;
+  original_name: string;
+  popularity: number;
+  profile_path: string;
+  cast_id: number;
+  character: string;
+  credit_id: string;
+  order: number;
+}
+
+export interface RawMovieCrew {
+  adult: boolean;
+  gender: number;
+  id: number;
+  known_for_department: string;
+  name: string;
+  original_name: string;
+  popularity: number;
+  profile_path: string;
+  credit_id: string;
+  department: string;
+  job: string;
+}
+
+export interface RawMovieCreditResponse {
+  id: number;
+  cast: RawMovieCast[];
+  crew: RawMovieCrew[];
+}
+
+export interface RawMovieRecommendationsResponse {
+  page: number;
+  results: RawMovie[];
+  total_pages: number;
+  total_results: number;
+}
+
 export interface RawMovieDetailsResponse {
   title: string;
   adult: boolean;
@@ -84,6 +127,8 @@ export interface RawMovieDetailsResponse {
   images: RawMovieImage;
   reviews: RawMovieReviewsResult;
   videos: RawMovieVideos;
+  credits: RawMovieCreditResponse;
+  recommendations: RawMovieRecommendationsResponse;
 }
 
 export interface MovieImage {
@@ -114,7 +159,28 @@ export interface MovieVideo {
   link: string;
 }
 
+export interface MovieCast {
+  adult: boolean;
+  gender: number;
+  id: number;
+  name: string;
+  character: string;
+  profilePath: string | null;
+  order: number;
+}
+
+export interface MovieCrew {
+  adult: boolean;
+  gender: number;
+  id: number;
+  name: string;
+  popularity: number;
+  profilePath: string | null;
+  job: string;
+}
+
 export interface MovieDetailsResponse {
+  id: number;
   title: string;
   adult: boolean;
   budget: number;
@@ -133,4 +199,8 @@ export interface MovieDetailsResponse {
   images: MovieImage[];
   reviews: MovieReviewsResult;
   videos: MovieVideo[];
+  director: MovieCrew | null;
+  producer: MovieCrew | null;
+  cast: MovieCast[];
+  recommendations: Movie[];
 }

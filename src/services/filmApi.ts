@@ -89,7 +89,7 @@ class FilmApiService {
     if (cachedData) return cachedData;
 
     try {
-      const response: AxiosResponse<RawMovieDetailsResponse> = await this.axiosInstance.get<RawMovieDetailsResponse>(`/movie/${id}?append_to_response=images,reviews,videos`);
+      const response: AxiosResponse<RawMovieDetailsResponse> = await this.axiosInstance.get<RawMovieDetailsResponse>(`/movie/${id}?append_to_response=images,reviews,videos,credits,recommendations`);
       cacheService.set(cacheKey, response.data);
       return response.data;
     } catch (error) {
