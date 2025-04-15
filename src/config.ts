@@ -15,6 +15,11 @@ export const PROFILE_SIZES = {
   medium: 'w185'
 } as const;
 
+export const POSTER_SIZE = {
+  medium: 'w342',
+  big: 'w500'
+} as const;
+
 export const BACKDROP_SIZES = {
   big: 'w1280'
 } as const;

@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import filmApiService from "../services/filmApi.js";
-import { mapMovieDetailsResponse, mapMovieResponse } from "../mapper/movieMapper.js";
+import filmApiService from "../services/film-api.service.js";
+import { mapMovieDetailsResponse, mapMovieResponse } from "../mapper/movie.mapper.js";
 import { CustomRequest } from "../types/express/index.js";
 import { FilmQueryParams, FilmTrendingQueryParams } from "../types/query.type.js";
 import { getTodayDate } from "../utilities/date.utility.js";

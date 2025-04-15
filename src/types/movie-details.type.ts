@@ -1,94 +1,15 @@
+import { CastResponse, RawCast, RawCrew } from "./credits.type.js";
 import { Genre } from "./genre.type.js";
+import { ImageResponse, RawDetailsImages } from "./images.type.js";
 import { Movie, RawMovie } from "./movie.type.js";
 import { RawProductionCompany, RawProductionCountry, SpokenLanguage, ProductionCompany } from "./production.type.js";
-
-export interface RawMovieImage {
-  backdrops: [
-    {
-      aspect_ratio: number;
-      height: number;
-      iso_639_1: string;
-      file_path: string;
-      vote_average: number;
-      vote_count: number;
-      width: number;
-    }
-  ]
-}
-
-export interface RawMovieReview {
-  author: string;
-  author_details: {
-    name: string;
-    username: string;
-    avatar_path: string;
-    rating: number | null;
-  };
-  content: string;
-  created_at: Date;
-  id: string;
-  updated_at: Date;
-  url: string;
-}
-
-export interface RawMovieReviewsResult {
-  page: number;
-  results: RawMovieReview[];
-  total_pages: number;
-  total_results: number;
-}
-
-export interface RawMovieVideos {
-  id: number;
-  results: [
-    {
-      iso_639_1: string;
-      iso_3166_1: string;
-      name: string;
-      key: string;
-      site: string;
-      size: number;
-      type: string;
-      official: boolean;
-      published_at: Date;
-      id: string;
-    },
-  ]
-}
-
-export interface RawMovieCast {
-  adult: boolean;
-  gender: number;
-  id: number;
-  known_for_department: string;
-  name: string;
-  original_name: string;
-  popularity: number;
-  profile_path: string;
-  cast_id: number;
-  character: string;
-  credit_id: string;
-  order: number;
-}
-
-export interface RawMovieCrew {
-  adult: boolean;
-  gender: number;
-  id: number;
-  known_for_department: string;
-  name: string;
-  original_name: string;
-  popularity: number;
-  profile_path: string;
-  credit_id: string;
-  department: string;
-  job: string;
-}
+import { RawReviewsResult, ReviewsResult } from "./reviews.type.js";
+import { RawMovieVideos, VideoResponse } from "./video.type.js";
 
 export interface RawMovieCreditResponse {
   id: number;
-  cast: RawMovieCast[];
-  crew: RawMovieCrew[];
+  cast: RawCast[];
+  crew: RawCrew[];
 }
 
 export interface RawMovieRecommendationsResponse {
@@ -124,49 +45,11 @@ export interface RawMovieDetailsResponse {
   video: boolean;
   vote_average: number;
   vote_count: number;
-  images: RawMovieImage;
-  reviews: RawMovieReviewsResult;
+  images: RawDetailsImages;
+  reviews: RawReviewsResult;
   videos: RawMovieVideos;
   credits: RawMovieCreditResponse;
   recommendations: RawMovieRecommendationsResponse;
-}
-
-export interface MovieImage {
-  filePath: string
-  voteAverage: number;
-  voteCount: number;
-}
-
-export interface MovieReview {
-  id: string;
-  author: string;
-  avatarPath: string;
-  rating: number | null;
-  content: string;
-}
-
-export interface MovieReviewsResult {
-  page: number;
-  results: MovieReview[];
-  totalPages: number;
-  totalResults: number;
-}
-
-export interface MovieVideo {
-  id: string;
-  name: string;
-  official: boolean;
-  link: string;
-}
-
-export interface MovieCast {
-  adult: boolean;
-  gender: number;
-  id: number;
-  name: string;
-  character: string;
-  profilePath: string | null;
-  order: number;
 }
 
 export interface MovieCrew {
@@ -196,11 +79,11 @@ export interface MovieDetailsResponse {
   voteAverage: number;
   voteCount: number;
   productionCompanies: ProductionCompany[];
-  images: MovieImage[];
-  reviews: MovieReviewsResult;
-  videos: MovieVideo[];
+  images: ImageResponse[];
+  reviews: ReviewsResult;
+  videos: VideoResponse[];
   director: MovieCrew | null;
   producer: MovieCrew | null;
-  cast: MovieCast[];
+  cast: CastResponse[];
   recommendations: Movie[];
 }

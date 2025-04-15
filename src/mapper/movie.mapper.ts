@@ -1,7 +1,12 @@
-import { BACKDROP_SIZES, config, JOB_TITLE, LOGO_SIZES, PROFILE_SIZES } from "../config.js";
-import { RawMovieImage, MovieImage, RawMovieReview, MovieReview, RawMovieReviewsResult, MovieReviewsResult, RawMovieVideos, MovieVideo, RawMovieDetailsResponse, MovieDetailsResponse, MovieCast, RawMovieCast, RawMovieCrew, MovieCrew } from "../types/movie-details.type.js";
+import { config, JOB_TITLE, LOGO_SIZES, POSTER_SIZE, PROFILE_SIZES } from "../config.js";
+import { RawCrew } from "../types/credits.type.js";
+import { RawMovieDetailsResponse, MovieDetailsResponse, MovieCrew } from "../types/movie-details.type.js";
 import { Movie, MovieResponse, RawMovie, RawMovieResponse } from "../types/movie.type.js";
 import { ProductionCompany, RawProductionCompany } from "../types/production.type.js";
+import { mapCast } from "./credits.mapper.js";
+import { mapImagesDetails } from "./image.mapper.js";
+import { mapResultReviews } from "./review.mapper.js";
+import { mapVideo } from "./video.mapper.js";
 
 export const mapMovie = (rawMovie: RawMovie, imageSize: number = 500): Movie => ({
   id: rawMovie.id,
@@ -20,39 +25,6 @@ export const mapMovieResponse = (rawResponse: RawMovieResponse, imageSize: numbe
   totalResults: rawResponse.total_results
 });
 
-
-export const mapMovieImagesDetails = (rawImage: RawMovieImage): MovieImage[] => (
-  rawImage.backdrops.map((image) => ({
-    filePath: config.FILM_IMAGE_API_URL + BACKDROP_SIZES.big + image.file_path,
-    voteAverage: image.vote_average,
-    voteCount: image.vote_count
-  }))
-)
-
-export const mapMovieReview = (rawMovieReview: RawMovieReview): MovieReview => ({
-  id: rawMovieReview.id,
-  author: rawMovieReview.author,
-  avatarPath: config.FILM_IMAGE_API_URL + PROFILE_SIZES.small + rawMovieReview.author_details.avatar_path,
-  rating: rawMovieReview.author_details.rating,
-  content: rawMovieReview.content,
-})
-
-export const mapMovieResultReviews = (rawReviewResult: RawMovieReviewsResult): MovieReviewsResult => ({
-  page: rawReviewResult.page,
-  results: rawReviewResult.results.map(mapMovieReview),
-  totalPages: rawReviewResult.total_pages,
-  totalResults: rawReviewResult.total_results
-})
-
-export const mapMovieVideos = (rawMovieVideo: RawMovieVideos): MovieVideo[] => (
-  rawMovieVideo.results.slice(0, 10).map((video) => ({
-    id: video.id,
-    name: video.name,
-    official: video.official,
-    link: video.key
-  }))
-)
-
 export const mapMovieProductionCompany = (rawMovieCompany: RawProductionCompany): ProductionCompany => ({
   id: rawMovieCompany.id,
   logoPath: config.FILM_IMAGE_API_URL + LOGO_SIZES.medium + rawMovieCompany.logo_path,
@@ -60,17 +32,7 @@ export const mapMovieProductionCompany = (rawMovieCompany: RawProductionCompany)
   originCountry: rawMovieCompany.origin_country
 })
 
-export const mapMovieCast = (rawMovieCast: RawMovieCast): MovieCast => ({
-  adult: rawMovieCast.adult,
-  gender: rawMovieCast.gender,
-  id: rawMovieCast.cast_id,
-  name: rawMovieCast.name,
-  character: rawMovieCast.character,
-  profilePath: rawMovieCast.profile_path ? config.FILM_IMAGE_API_URL + PROFILE_SIZES.medium + rawMovieCast.profile_path : null,
-  order: rawMovieCast.order
-})
-
-export const extractByJob = (rawMovieCrew: RawMovieCrew[], jobName: string): MovieCrew | null => {
+export const extractByJob = (rawMovieCrew: RawCrew[], jobName: string): MovieCrew | null => {
   const crewMember = rawMovieCrew.find(crewMember => crewMember.job === jobName);
 
   if (crewMember) {
@@ -95,7 +57,7 @@ export const mapMovieDetailsResponse = (rawResponse: RawMovieDetailsResponse): M
   budget: rawResponse.budget,
   genres: rawResponse.genres,
   overview: rawResponse.overview,
-  poster: config.FILM_IMAGE_API_URL + 'w500' + rawResponse.poster_path,
+  poster: config.FILM_IMAGE_API_URL + POSTER_SIZE.big + rawResponse.poster_path,
   tagline: rawResponse.tagline,
   runtime: rawResponse.runtime,
   popularity: rawResponse.popularity,
@@ -105,11 +67,11 @@ export const mapMovieDetailsResponse = (rawResponse: RawMovieDetailsResponse): M
   voteAverage: rawResponse.vote_average,
   voteCount: rawResponse.vote_count,
   productionCompanies: rawResponse.production_companies.map(mapMovieProductionCompany),
-  images: mapMovieImagesDetails(rawResponse.images),
-  reviews: mapMovieResultReviews(rawResponse.reviews),
-  videos: mapMovieVideos(rawResponse.videos),
+  images: rawResponse.images.backdrops.map(mapImagesDetails),
+  reviews: mapResultReviews(rawResponse.reviews),
+  videos: rawResponse.videos.results.map(mapVideo),
   director: extractByJob(rawResponse.credits.crew, JOB_TITLE.DIRECTOR),
   producer: extractByJob(rawResponse.credits.crew, JOB_TITLE.PRODUCER),
-  cast: rawResponse.credits.cast.map(mapMovieCast),
+  cast: rawResponse.credits.cast.map(mapCast),
   recommendations: rawResponse.recommendations.results.map((movie) => mapMovie(movie, 342))
 })
