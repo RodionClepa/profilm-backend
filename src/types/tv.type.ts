@@ -23,7 +23,7 @@ export interface RawTVResponse {
 
 export interface TV {
   id: number;
-  name: string;
+  title: string;
   genreIds: number[];
   adult: boolean;
   releaseDate: Date;

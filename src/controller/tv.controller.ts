@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
-import filmApiService from "../services/filmApi.js";
-import { mapTVResponse, mapTVResponseTrending } from "../mapper/tvMapper.js";
+import filmApiService from "../services/film-api.service.js";
+import { mapTVDetailsResponse, mapTVResponse, mapTVResponseTrending } from "../mapper/tv.mapper.js";
 import { FilmTrendingQueryParams } from "../types/query.type.js";
 import { CustomRequest } from "../types/express/index.js";
+import { NotFoundError } from "../errors/not-found.errors.js";
 
 export const getPopularTV = async (req: CustomRequest<FilmTrendingQueryParams>, res: Response) => {
   const { page, includeAdult, imageSize } = req.validatedQuery;
@@ -42,3 +43,28 @@ export const getTrendingTVs = async (req: CustomRequest<FilmTrendingQueryParams>
     res.status(500).json({ message: error.message });
   }
 };
+
+export const getTVDetails = async (req: Request, res: Response) => {
+  const id: string = req.params.id;
+  const tvId: number = parseInt(id, 10);
+
+  if (isNaN(tvId)) {
+    res.status(400).send('Invalid tv ID');
+    return;
+  }
+
+  try {
+    const tv = await filmApiService.detailsTV(tvId);
+
+    const formattedTVs = mapTVDetailsResponse(tv);
+
+    res.json(formattedTVs);
+  } catch (error) {
+    if (error instanceof NotFoundError) {
+      res.status(404).json({ message: error.message });
+      return;
+    }
+    console.error('Error in getTVDetails:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+}

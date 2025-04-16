@@ -1,10 +1,13 @@
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import { config } from '../config.js';
-import cacheService from './cacheService.js';
+import cacheService from './cache.service.js';
 import { GenreApiResponse } from '../types/genre.type.js';
 import { RawMovieResponse } from '../types/movie.type.js';
 import { RawTVResponse, RawTVResponseTrending, RawTVTrending } from '../types/tv.type.js';
 import { TimeWindow } from '../types/query.type.js';
+import { RawMovieDetailsResponse } from '../types/movie-details.type.js';
+import { NotFoundError } from '../errors/not-found.errors.js';
+import { RawTVDetailsResponse, RawTVSeasonDetailsResponse } from '../types/tv-details.type.js';
 
 class FilmApiService {
   private axiosInstance: AxiosInstance;
@@ -78,6 +81,70 @@ class FilmApiService {
     } catch (error) {
       console.error('Error fetching Trending Movies:', error);
       throw new Error('Failed to fetch Trending Movies data');
+    }
+  }
+
+  async detailsMovie(id: number): Promise<RawMovieDetailsResponse> {
+    const cacheKey = JSON.stringify({ function: "detailsMovie", id });
+    const cachedData = cacheService.get<RawMovieDetailsResponse>(cacheKey);
+    if (cachedData) return cachedData;
+
+    try {
+      const response: AxiosResponse<RawMovieDetailsResponse> = await this.axiosInstance.get<RawMovieDetailsResponse>(`/movie/${id}?append_to_response=images,reviews,videos,credits,recommendations`);
+      cacheService.set(cacheKey, response.data);
+      return response.data;
+    } catch (error) {
+      if (error.response?.status === 404) {
+        throw new NotFoundError(`Movie with ID ${id} not found`);
+      }
+      console.error(`Error fetching details for movie ID ${id}:`, error);
+      throw new Error(`Failed to fetch details for movie ID ${id}`);
+    }
+  }
+
+  async detailsTV(id: number): Promise<RawTVDetailsResponse> {
+    const cacheKey = JSON.stringify({ function: "detailsTV", id });
+    const cachedData = cacheService.get<RawTVDetailsResponse>(cacheKey);
+    if (cachedData) return cachedData;
+
+    try {
+      const response: AxiosResponse<RawTVDetailsResponse> = await this.axiosInstance.get<RawTVDetailsResponse>(`/tv/${id}?append_to_response=images,reviews,videos,credits,recommendations`);
+      const numberOfSeasons = response.data.number_of_seasons;
+
+      const seasonPromises = Array.from({ length: numberOfSeasons }, (_, i) => {
+        return this.detailsTVSeason(id, i + 1);
+      });
+
+      const seasonsEpisodes = await Promise.all(seasonPromises);
+
+      response.data.seasonsEpisodes = seasonsEpisodes;
+
+      cacheService.set(cacheKey, response.data);
+      return response.data;
+    } catch (error) {
+      if (error.response?.status === 404) {
+        throw new NotFoundError(`TV with ID ${id} not found`);
+      }
+      console.error(`Error fetching details for TV ID ${id}:`, error);
+      throw new Error(`Failed to fetch details for TV ID ${id}`);
+    }
+  }
+
+  private async detailsTVSeason(tvId: number, seasonNumber: number): Promise<RawTVSeasonDetailsResponse> {
+    const cacheKey = JSON.stringify({ function: "detailsTVSeason", tvId, seasonNumber });
+    const cachedData = cacheService.get<RawTVSeasonDetailsResponse>(cacheKey);
+    if (cachedData) return cachedData;
+
+    try {
+      const response: AxiosResponse<RawTVSeasonDetailsResponse> = await this.axiosInstance.get<RawTVSeasonDetailsResponse>(`/tv/${tvId}/season/${seasonNumber}`);
+      cacheService.set(cacheKey, response.data);
+      return response.data;
+    } catch (error) {
+      if (error.response?.status === 404) {
+        throw new NotFoundError(`TV with ID ${tvId} or Season number ${seasonNumber} not found`);
+      }
+      console.error(`Error fetching details season for TV ID ${tvId} Season ${seasonNumber}:`, error);
+      throw new Error(`Error fetching details season for TV ID ${tvId} Season ${seasonNumber}`);
     }
   }
 

@@ -1,10 +1,11 @@
 import { Request, Response } from "express";
-import filmApiService from "../services/filmApi.js";
-import { mapMovieResponse } from "../mapper/movieMapper.js";
+import filmApiService from "../services/film-api.service.js";
+import { mapMovieDetailsResponse, mapMovieResponse } from "../mapper/movie.mapper.js";
 import { CustomRequest } from "../types/express/index.js";
 import { FilmQueryParams, FilmTrendingQueryParams } from "../types/query.type.js";
 import { getTodayDate } from "../utilities/date.utility.js";
 import { ReleaseType } from "../types/film.type.js";
+import { NotFoundError } from "../errors/not-found.errors.js";
 
 export const getPopularMovies = async (req: CustomRequest<FilmQueryParams>, res: Response) => {
   const { page, includeAdult, imageSize } = req.validatedQuery;
@@ -64,5 +65,31 @@ export const getUpcomingMovies = async (req: CustomRequest<FilmQueryParams>, res
     res.json(formattedMovies);
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+}
+
+export const getMovieDetails = async (req: CustomRequest<FilmQueryParams>, res: Response) => {
+  const id: string = req.params.id;
+
+  const movieId: number = parseInt(id, 10);
+
+  if (isNaN(movieId)) {
+    res.status(400).send('Invalid movie ID');
+    return;
+  }
+
+  try {
+    const movie = await filmApiService.detailsMovie(movieId);
+
+    const formattedMovies = mapMovieDetailsResponse(movie);
+
+    res.json(formattedMovies);
+  } catch (error) {
+    if (error instanceof NotFoundError) {
+      res.status(404).json({ message: error.message });
+      return;
+    }
+    console.error('Error in getMovieDetails:', error);
+    res.status(500).json({ message: 'Internal server error' });
   }
 }
