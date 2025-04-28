@@ -183,6 +183,27 @@ class FilmApiService {
       throw new Error('Failed to fetch movie genres data');
     }
   }
+
+  async searchMovie(page: number, includeAdult: boolean, searchName: string): Promise<RawMovieResponse> {
+    const params = {
+      language: config.defaultLanguage,
+      page: page,
+      include_adult: includeAdult,
+      query: searchName
+    }
+    const cacheKey = JSON.stringify({ function: "searchMovie", params });
+    const cachedData = cacheService.get<RawMovieResponse>(cacheKey);
+    if (cachedData) return cachedData;
+
+    try {
+      const response: AxiosResponse<RawMovieResponse> = await this.axiosInstance.get('/search/movie', { params });
+      cacheService.set(cacheKey, response.data, 3600);
+      return response.data;
+    } catch (error) {
+      console.error('Error search movies:', error);
+      throw new Error(`Failed to search movies with name ${searchName}, page ${page}, adult ${includeAdult}`);
+    }
+  }
 }
 
 
