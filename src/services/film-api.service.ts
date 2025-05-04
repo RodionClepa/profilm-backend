@@ -204,6 +204,27 @@ class FilmApiService {
       throw new Error(`Failed to search movies with name ${searchName}, page ${page}, adult ${includeAdult}`);
     }
   }
+
+  async searchTV(page: number, includeAdult: boolean, searchName: string): Promise<RawTVResponse> {
+    const params = {
+      language: config.defaultLanguage,
+      page: page,
+      include_adult: includeAdult,
+      query: searchName
+    }
+    const cacheKey = JSON.stringify({ function: "searchTV", params });
+    const cachedData = cacheService.get<RawTVResponse>(cacheKey);
+    if (cachedData) return cachedData;
+
+    try {
+      const response: AxiosResponse<RawTVResponse> = await this.axiosInstance.get('/search/tv', { params });
+      cacheService.set(cacheKey, response.data, 3600);
+      return response.data;
+    } catch (error) {
+      console.error('Error search TVs:', error);
+      throw new Error(`Failed to search TVs with name ${searchName}, page ${page}, adult ${includeAdult}`);
+    }
+  }
 }
 
 

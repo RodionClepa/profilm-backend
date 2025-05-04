@@ -13,15 +13,8 @@ export enum TimeWindow {
   WEEK = "week"
 }
 
-export enum TypeSearch {
-  MOVIE = "movie",
-  TV = "tv",
-  PEOPLE = "people",
-}
-
 export interface SearchQueryParams {
   searchName: string;
-  selectedType: string,
   page: number;
   includeAdult: boolean;
   imageSize: number;

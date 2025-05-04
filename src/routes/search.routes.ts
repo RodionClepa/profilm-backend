@@ -1,9 +1,10 @@
 import express, { Router } from "express";
 import { searchQueryParams } from "../middleware/searchQueryParams.middleware.js";
-import { searchMedia } from "../controller/search.controller.js";
+import { searchMovies, searchTVs } from "../controller/search.controller.js";
 
 const router: Router = express.Router();
 
-router.get('', searchQueryParams, searchMedia);
+router.get('/movies', searchQueryParams, searchMovies);
+router.get('/tvs', searchQueryParams, searchTVs);
 
 export default router;
