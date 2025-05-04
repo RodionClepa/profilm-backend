@@ -3,6 +3,7 @@ import sequelize from './database/init.js';
 import movieRouter from './routes/movie.routes.js';
 import tvRouter from './routes/tv.routes.js';
 import genresRouter from './routes/genre.routes.js';
+import searchRouter from './routes/search.routes.js';
 import { initializeGenres } from './database/seeders.js';
 import cors from 'cors';
 
@@ -37,6 +38,7 @@ async function startServer() {
   app.use("/api/movies", movieRouter);
   app.use("/api/tv", tvRouter);
   app.use("/api/genres", genresRouter);
+  app.use("/api/search", searchRouter);
 
   app.get('/', (req: Request, res: Response) => {
     res.send('Hello World!!');

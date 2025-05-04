@@ -12,3 +12,10 @@ export enum TimeWindow {
   DAY = "day",
   WEEK = "week"
 }
+
+export interface SearchQueryParams {
+  searchName: string;
+  page: number;
+  includeAdult: boolean;
+  imageSize: number;
+}
