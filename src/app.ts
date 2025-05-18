@@ -4,7 +4,8 @@ import movieRouter from './routes/movie.routes.js';
 import tvRouter from './routes/tv.routes.js';
 import genresRouter from './routes/genre.routes.js';
 import searchRouter from './routes/search.routes.js';
-import { initializeGenres } from './database/seeders.js';
+import authRouter from './routes/auth.routes.js';
+import { initializeGenres, initializeRegisterTypes } from './database/seeders.js';
 import cors from 'cors';
 
 const app: Express = express();
@@ -32,6 +33,7 @@ try {
 async function startServer() {
 
   await initializeGenres();
+  await initializeRegisterTypes();
 
   app.use(cors(corsOptions))
 
@@ -39,6 +41,8 @@ async function startServer() {
   app.use("/api/tv", tvRouter);
   app.use("/api/genres", genresRouter);
   app.use("/api/search", searchRouter);
+  app.use("/api/auth", authRouter);
+
 
   app.get('/', (req: Request, res: Response) => {
     res.send('Hello World!!');

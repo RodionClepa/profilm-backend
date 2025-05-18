@@ -3,6 +3,8 @@ import dotenv from 'dotenv';
 import { PostgresDialect } from '@sequelize/postgres';
 import { Movie } from '../models/Movie.models.js';
 import { GenreType } from '../models/GenreType.models.js';
+import { User } from '../models/User.models.js';
+import { RegisterType } from '../models/RegisterType.models.js';
 
 // Load .env variables
 dotenv.config();
@@ -21,7 +23,7 @@ const sequelize = new Sequelize({
   password: DB_PASSWORD,
   host: DB_HOST,
   port: DB_PORT,
-  models: [Movie, GenreType]
+  models: [Movie, GenreType, User, RegisterType]
 })
 
 export default sequelize;

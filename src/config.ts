@@ -1,10 +1,15 @@
+export const ConfigRegisterType = {
+  GOOGLE_AUTH: 1,
+  FORM_AUTH: 2
+} as const;
+
 export const config = {
   FILM_API_URL: 'https://api.themoviedb.org/3',
   PORT: 3000,
   defaultLanguage: 'en-US',
   FILM_IMAGE_API_URL: 'https://image.tmdb.org/t/p/',
   YOUTUBE_VIDEOS: 'https://www.youtube.com/watch?v='
-};
+} as const;
 
 export const LOGO_SIZES = {
   medium: 'w154',
@@ -27,4 +32,4 @@ export const BACKDROP_SIZES = {
 export const JOB_TITLE = {
   DIRECTOR: "Director",
   PRODUCER: "Producer"
-}
+} as const;

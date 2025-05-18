@@ -1,9 +1,9 @@
-import sequelize from './init.js';
+import { ConfigRegisterType } from '../config.js';
 import { GenreType } from '../models/GenreType.models.js';
+import { RegisterType } from '../models/RegisterType.models.js';
 
 async function initializeGenres() {
   try {
-    // Populate genres if empty
     const genreCount = await GenreType.count();
     if (genreCount === 0) {
       console.log('Populating initial genres');
@@ -22,4 +22,24 @@ async function initializeGenres() {
   }
 }
 
-export { initializeGenres };
+async function initializeRegisterTypes() {
+  try {
+    const typesCount = await RegisterType.count();
+    if (typesCount === 0) {
+      console.log('Populating initial register types');
+      const initialRegisterTypes = [
+        { id: ConfigRegisterType.GOOGLE_AUTH, type: 'GOOGLE_AUTH' },
+        { id: ConfigRegisterType.FORM_AUTH, type: 'FORM_AUTH' },
+      ];
+      await RegisterType.bulkCreate(initialRegisterTypes);
+      console.log('Register Types populated.');
+    } else {
+      console.log('RegisterType table already has data. Skipping population.');
+    }
+  } catch (error) {
+    console.error('Error during initialization:', error);
+    throw error;
+  }
+}
+
+export { initializeGenres, initializeRegisterTypes };
