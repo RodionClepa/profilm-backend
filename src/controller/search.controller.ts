@@ -12,9 +12,6 @@ export const searchMovies = async (req: CustomRequest<SearchQueryParams>, res: R
     const movies = await filmApiService.searchMovie(page, includeAdult, searchName);
     const formattedMovies = mapMovieResponse(movies, imageSize);
     res.json(formattedMovies);
-    // const tvs = await filmApiService.searchTV(page, includeAdult, searchName);
-    // const formattedTVs = mapTVResponse(tvs, imageSize);
-    // res.json(formattedTVs);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
