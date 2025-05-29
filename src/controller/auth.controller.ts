@@ -38,7 +38,7 @@ export const exchangeUuidForToken = async (req: Request, res: Response) => {
 
 export const verifyToken = async (req: Request, res: Response) => {
   const token = req.headers['authorization']?.split(' ')[1];
-
+  console.log(req.headers['authorization'])
   try {
     if (!token) {
       res.status(403).json({ message: 'No token provided' });

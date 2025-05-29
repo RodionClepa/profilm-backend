@@ -78,7 +78,7 @@ class AuthService {
           username: dbUser.dataValues.username,
           email: dbUser.dataValues.email,
         },
-        { expiresIn: '1h' }
+        { expiresIn: '1m' }
       );
 
       const uuid = randomUUID();
