@@ -7,6 +7,8 @@ import searchRouter from './routes/search.routes.js';
 import authRouter from './routes/auth.routes.js';
 import { initializeGenres, initializeRegisterTypes } from './database/seeders.js';
 import cors from 'cors';
+import swaggerSpec from './swagger.js';
+import swaggerUi from 'swagger-ui-express';
 
 const app: Express = express();
 const port = process.env.PORT || 3000;
@@ -42,6 +44,8 @@ async function startServer() {
   app.use("/api/genres", genresRouter);
   app.use("/api/search", searchRouter);
   app.use("/api/auth", authRouter);
+
+  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 
   app.get('/', (req: Request, res: Response) => {
