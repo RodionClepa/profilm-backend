@@ -17,6 +17,7 @@ class AuthService {
   constructor() {
     this.axiosInstance = axios.create();
   }
+
   async handleNewUser(user: GoogleUser) {
     try {
       const newUser = await User.create({
@@ -49,51 +50,90 @@ class AuthService {
     }
   }
 
-  async processGoogleAuth(code: string) {
+  private async exchangeCodeForToken(code: string): Promise<string> {
     try {
-      const tokenRes = await this.axiosInstance.post('https://oauth2.googleapis.com/token', null, {
-        params: {
-          code,
-          client_id: process.env.GOOGLE_CLIENT_ID,
-          client_secret: process.env.GOOGLE_CLIENT_SECRET,
-          redirect_uri: `${process.env.BACKEND_URI}:${process.env.PORT}/${process.env.GOOGLE_URL_CALLBACK}`,
-          grant_type: 'authorization_code',
-        },
-      });
+      const tokenRes = await this.axiosInstance.post(
+        'https://oauth2.googleapis.com/token',
+        null,
+        {
+          params: {
+            code,
+            client_id: process.env.GOOGLE_CLIENT_ID,
+            client_secret: process.env.GOOGLE_CLIENT_SECRET,
+            redirect_uri: `${process.env.BACKEND_URI}:${process.env.PORT}/${process.env.GOOGLE_URL_CALLBACK}`,
+            grant_type: 'authorization_code',
+          },
+        }
+      );
+      return tokenRes.data.access_token;
+    } catch (err) {
+      console.error('Failed to exchange code for access token:', (err as any).response?.data || (err as Error).message);
+      throw new Error('Google token exchange failed');
+    }
+  }
 
-      const { access_token } = tokenRes.data;
-
+  private async fetchGoogleUserInfo(access_token: string): Promise<GoogleUser> {
+    try {
       const userRes = await this.axiosInstance.get('https://www.googleapis.com/oauth2/v2/userinfo', {
         headers: { Authorization: `Bearer ${access_token}` },
       });
+      return userRes.data;
+    } catch (err) {
+      console.error('Failed to fetch user info from Google:', (err as any).response?.data || (err as Error).message);
+      throw new Error('Google user info retrieval failed');
+    }
+  }
 
-      const user: GoogleUser = userRes.data;
-
+  private async getOrCreateUser(user: GoogleUser): Promise<User> {
+    try {
       const userExists = await User.findOne({ where: { email: user.email } });
-      const dbUser = userExists ? await this.handleExistingUser(user) : await this.handleNewUser(user);
+      return userExists ? await this.handleExistingUser(user) : await this.handleNewUser(user);
+    } catch (err) {
+      console.error('Failed to find or create user in DB:', (err as Error).message);
+      throw new Error('User persistence error');
+    }
+  }
 
-      const appToken = jwtService.sign(
+  private async generateAppToken(dbUser: User): Promise<string> {
+    try {
+      return jwtService.sign(
         {
           id: dbUser.dataValues.id,
           username: dbUser.dataValues.username,
           email: dbUser.dataValues.email,
         },
-        { expiresIn: '1h' }
+        { expiresIn: '24h' }
       );
+    } catch (err) {
+      console.error('Failed to generate JWT token:', (err as Error).message);
+      throw new Error('Token generation error');
+    }
+  }
 
+  private async cacheAppToken(appToken: string): Promise<string> {
+    try {
       const uuid = randomUUID();
       const ttl = 60;
       const success = cacheService.set(uuid, appToken, ttl);
 
       if (!success) {
-        throw new Error('Failed to store UUID in cache');
+        console.error('Failed to store UUID/token in cache');
+        throw new Error('Token caching error');
       }
 
       return uuid;
     } catch (err) {
-      console.error('Google Auth Error:', (err as Error).message || (err as any).response?.data);
+      console.error('Failed to cache app token:', (err as Error).message);
       throw err;
     }
+  }
+
+  async processGoogleAuth(code: string) {
+    const access_token = await this.exchangeCodeForToken(code);
+    const user = await this.fetchGoogleUserInfo(access_token);
+    const dbUser = await this.getOrCreateUser(user);
+    const appToken = await this.generateAppToken(dbUser);
+    return await this.cacheAppToken(appToken);
   }
 
   async exchangeUuidForToken(uuid: string) {

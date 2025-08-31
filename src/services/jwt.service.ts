@@ -100,7 +100,7 @@ class JwtService {
 
       const isValid = cryptoVerify(
         'sha256',
-        Buffer.from(data),
+        Buffer.from(data, 'utf8'),
         this.publicKey,
         signatureBuffer
       );
@@ -109,6 +109,10 @@ class JwtService {
     } catch (error) {
       throw new Error(`Signature verification failed: ${(error as Error).message}`);
     }
+  }
+
+  public getPublicKey() {
+    return this.publicKey;
   }
 }
 

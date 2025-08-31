@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import authService from '../services/auth.service.js';
+import jwtService from '../services/jwt.service.js';
 
 export const googleAuth = async (req: Request, res: Response) => {
   const { code } = req.query;
@@ -56,3 +57,7 @@ export const verifyToken = async (req: Request, res: Response) => {
     res.status(401).json({ message: (err as Error).message });
   }
 };
+
+export const getPublicKey = async (req: Request, res: Response) => {
+  res.status(200).json({ key: jwtService.getPublicKey() })
+}
